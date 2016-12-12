@@ -62,8 +62,7 @@ The project file tree:
 |   |- view.js      # page view render method
 |   |- adapter.js   # adapter interface
 |   |- util.js      # util method
-|   |- op.js        # op object
-|   |- case.js      # case object
-|   |- load.js      # load file method
+|   |- model.js     # base object
+|   |- loader.js    # load file method
 |- README.md        # this file
 ```
