@@ -20,7 +20,7 @@ And the "op object" defined here:
                    "req" : post(h, p)
                          | get(h, p), // h is your api host and p is your api path, get or post is the http method
                   "data" : (json)d, // d is your parameters to send
-                "assert" : (json)r, // if r is bool, it will be treat as assert, otherwise compare with response
+                "assert" : (json)r, // if r is bool, it will be treat as assert result, otherwise compare with response
 
             // optional properties
                   "hearder" : (json)h, // h is the request header. DEFAULT: empty

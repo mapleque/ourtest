@@ -119,7 +119,8 @@
         'core/view.js',
         'core/util.js',
         'core/model.js',
-        'core/loader.js'
+        'core/loader.js',
+        'adapter/normal.js'
     ], function(){
         // load case file interact
         exports.ourtest.view.addListener('load', function(caseFile, chanel){

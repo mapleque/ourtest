@@ -13,27 +13,35 @@
         fileMap[file.name] = file;
         // file view
         var html = "" +
-        "<div>" +
-        "<input type='submit', value='" + file.name + "' id='run'>" +
-        "<div id='report'></div>" + 
+        "<div id='" + file.name + "'>" +
+        "<input type='submit' value='" + file.name + "' class='case'>" +
+        "<span class='total'></span>" +
+        "<span class='passed'></span>" +
+        "<span class='faild'></span>" +
+        "<div class='progress'>" +
+        "<span class='passed-progress'></span>" +
+        "<span class='faild-progress'></span>" +
+        "</div>" +
+        "<div class='report'></div>" +
         "</div>"
         exports.document.getElementById('tree').innerHTML = html;
         // run file
-        exports.document.getElementById('run').onclick = function(){
-            var fileName = exports.document.getElementById('run').value;
+        exports.document.getElementsByClassName('case')[0].onclick = function(){
+            start();
+            var fileName = exports.document.getElementsByClassName('case')[0].value;
             typeof eventMap['run'] == 'function'
                 && eventMap['run'](fileMap[fileName], {
                     addListenr:addListener,
                     report: function(type, op, msg){
                         switch (type) {
                             case 'progress':
-                                report(op, msg);
+                                progress(op, msg);
                                 break;
                             case 'error':
                                 error(op, msg);
                                 break;
                             case 'debug':
-                                error(op, msg);
+                                //debug(op, msg);
                                 break;
                             default:
                                 error(op, msg);
@@ -65,16 +73,58 @@
     };
     exports.ourtest.view.initPage = initPage;
 
-    var report = function(op, msg){
-        exports.document.getElementById('report').innerHTML
-            += '<p>[report]' + op.url + ' ' + msg.passed+ '/' + msg.total;
+    var renderCompare = function(tree, prefix){
+        if (typeof prefix == 'undefined') {
+            prefix = '    ';
+        }
+        var table = [];
+        if (tree.child) {
+            for (var key in tree.child) {
+                table.push(renderCompare(tree.child[key], prefix + '    '));
+            }
+        } else if (typeof tree.result != 'undefined'){
+            table.push('    ' + (tree.result? 'O': 'X') + prefix + tree.left + '    ' + tree.right);
+        } else {
+            return prefix + 'no compare property';
+        }
+        return table.join('\n');
+    };
+
+    var start = function(){
+        exports.document.getElementsByClassName('report')[0].innerHTML = '';
+    };
+
+    var progress = function(op, msg){
+        var passedWidth = msg.passed / msg.total * 100 + '%';
+        var faildWidth = msg.faild / msg.total * 100 + '%';
+        exports.document.getElementsByClassName('passed-progress')[0].style = 'width:' + passedWidth;
+        exports.document.getElementsByClassName('faild-progress')[0].style = 'width:' + faildWidth;
+        exports.document.getElementsByClassName('total')[0].innerHTML = 'Total:' + msg.total;
+        exports.document.getElementsByClassName('passed')[0].innerHTML = 'Passed:' + msg.passed;
+        exports.document.getElementsByClassName('faild')[0].innerHTML = 'Faild:' + msg.faild;
+    };
+    var debug = function(op, resp){
+        exports.document.getElementsByClassName('report')[0].innerHTML +=
+            '<pre class="debug">' +
+            '[debug]' + op.url + ':' + resp + '\n' +
+            'lineNumber:' + op.lineNumber + '\n' +
+            'callStack:' + '\n' +
+            op.callStack.join('\n') + '\n' +
+            'compareTree:' + '\n' +
+            renderCompare(op.compareTree) + '\n' +
+            '</pre>';
     };
     var error = function(op, msg){
-        exports.document.getElementById('report').innerHTML
-            += '<p>[error]' + op.url + ':' + msg;
+        exports.document.getElementsByClassName('report')[0].innerHTML +=
+            '<pre class="error">' +
+            '[error]' + op.url + ':' + msg + '\n' +
+            'lineNumber:' + op.lineNumber + '\n' +
+            'callStack:' + '\n' +
+            op.callStack.join('\n') + '\n' +
+            'compareTree:' + '\n' +
+            renderCompare(op.compareTree) + '\n' +
+            '</pre>';
     };
     var finish = function(){
-        exports.document.getElementById('report').innerHTML
-            += '<p>[finish]';
     };
  })(typeof window != 'undefined' ? window : exports);
