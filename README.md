@@ -3,11 +3,7 @@ Deploy this service under your domain, and all you need is telling me where is y
 
 The case should be programmed by javascript with following format:
 ```javascript
-{
-       setup : [ <op>, ... ], // somthing before case run
-       cases : [ <op>, ... ], // case to be run
-    teardown : [ <op>, ... ], // somthing after case run
-}
+[ <op>, ... ], // case to be run
 ```
 
 And the "op object" defined here:
@@ -40,7 +36,7 @@ Extra, you can def your global config and context:
         default_op_properties:{ // all optional properties deafault value could be change here
         }
     },
-    context:{ // declare your context during running case, then you can use it directly in case code and it will be independence between cases
+    context:{ // declare your context during running case, then you can use it directly in op code and it will be independence between cases
     }
 }
 ```
@@ -50,6 +46,12 @@ Extra, you can def your global config and context:
 Extra, you can provide your case running adapter instead of the default one by implement the interface:
 ```javascript
 // case running adapter interface
+(function(exports){
+    exports.ourtest.adapter = {};
+    exports.ourtest.adapter.request = function(op, callback){
+        // TODO deal with op and callback(response)
+    };
+})(typeof window != 'undefined' ? window : exports);
 ```
 
 The project file tree:
