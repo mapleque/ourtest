@@ -1,3 +1,4 @@
 runtime = {
-    adapter:'adapter/normal.js'
+    adapter:'adapter/http.js'
+    //adapter:'adapter/normal.js'
 }

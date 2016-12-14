@@ -43,7 +43,7 @@
                                 error(dom, op, msg);
                                 break;
                             case 'debug':
-                                debug(dom, op, msg);
+                                //debug(dom, op, msg);
                                 break;
                             default:
                                 error(dom, op, msg);
@@ -113,6 +113,7 @@
             op.callStack.join('\n') + '\n' +
             'compareTree:' + '\n' +
             renderCompare(op.compareTree) + '\n' +
+            'error:' + op.error + '\n' +
             '</pre>');
     };
     var finish = function(dom){

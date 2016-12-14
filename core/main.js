@@ -56,20 +56,20 @@
             xmlHttp.onreadystatechange = function() {
                 if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
                     typeof success == 'function' && success(xmlHttp.responseText, xmlHttp);
-                } else {
-                    typeof error == 'function' && error(xmlHttp);
+                } else if (xmlHttp.readyState == 4){
+                    typeof error == 'function' && error(xmlHttp.responseText, xmlHttp);
                 }
             };
         };
         var doPost = function(url, data, success, error){
-            xmlHttp.open("POST",url);
+            xmlHttp.open("POST", url);
             xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
             xmlHttp.send(data);
             xmlHttp.onreadystatechange = function() {
                 if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
                     typeof success == 'function' && success(xmlHttp.responseText, xmlHttp);
-                } else {
-                    typeof error == 'function' && error(xmlHttp);
+                } else if (xmlHttp.readyState == 4){
+                    typeof error == 'function' && error(xmlHttp.responseText, xmlHttp);
                 }
             };
         };
@@ -86,7 +86,7 @@
                 doGet(url, opt.success, opt.error);
                 break;
             case 'POST':
-                doPost(url, requestData, opt.success, opt.error);
+                doPost(opt.url, requestData, opt.success, opt.error);
                 break;
         }
     };

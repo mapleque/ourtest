@@ -18,6 +18,8 @@
                     self.progress.passed++;
                 } else {
                     self.progress.faild++;
+                    typeof chanel.report == 'function'
+                        && chanel.report('error', op, 'op faild');
                 }
                 typeof chanel.report == 'function'
                     && chanel.report('progress', op, self.progress);
@@ -161,12 +163,21 @@
                 return;
             }
 
-            exports.ourtest.adapter.request(self, function(resp){
+            exports.ourtest.adapter.request(self, function(resp, success){
                 self.response = resp;
                 if (typeof self.assertPredeal == 'function') {
                     self.response = self.assertPredeal(resp);
                 }
-                var ret = assert();
+                var ret = true;
+                if (!success) {
+                    self.error = resp;
+                    ret = false;
+                } else {
+                    ret = assert();
+                    if (!ret) {
+                        self.error = 'assert faild!';
+                    }
+                }
                 chanel.report('debug', self, 'send a request');
                 callback(self, ret);
             });

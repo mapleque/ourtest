@@ -48,7 +48,7 @@
                     opt.url = path + '/' + api;
                     opt.method = 'POST';
                     return opt;
-                }
+                };
                 var ops = eval(code + '\n//# sourceURL=ourtest/cases.js');
                 for (var i in ops) {
                     var op = new exports.ourtest.Op(ops[i]);
