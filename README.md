@@ -29,16 +29,17 @@ And the "op object" defined here:
 
 --------
 
-Extra, you can def your global config and context:
+Extra, you can def your runtime config in ```config/runtime.js```:
 ```javasript
-{
-    config:{
-        default_op_properties:{ // all optional properties deafault value could be change here
-        }
-    },
-    context:{ // declare your context during running case, then you can use it directly in op code and it will be independence between cases
-    }
+runtime = {
+    adapter:'adapter/normal.js'
 }
+```
+And def list your cases files in ```config/cases.js```:
+```javasript
+[
+    'cases/basic.js'
+]
 ```
 
 --------
@@ -62,9 +63,11 @@ The project file tree:
 |- core
 |   |- main.js      # initial method
 |   |- view.js      # page view render method
-|   |- adapter.js   # adapter interface
 |   |- util.js      # util method
 |   |- model.js     # base object
 |   |- loader.js    # load file method
+|- config
+|   |- cases.js     # config the cases file
+|   |- runtime.js   # config runtime properties
 |- README.md        # this file
 ```
