@@ -93,25 +93,29 @@
     exports.ourtest.request = request;
     // implement a require for browser
     var require = function(files, callback){
-        var total = files.length;
+        var namespace = {};
+        var total = 0;
+        for (var i in files) {
+            total++;
+        }
         var finish = 0;
         var end = function(){
             finish++;
             if (finish >= total) {
-                callback();
+                callback(namespace);
             }
         };
         for (var i in files) {
-            (function(file){
+            (function(key, file){
                 request({
                     url: file,
                     success: function(resp){
                         // add source url for debug
-                        eval(resp + '\n//# sourceURL=ourtest/' + file);
+                        namespace[key] = eval(resp + '\n//# sourceURL=ourtest/' + file);
                         end();
                     }
                 });
-            })(files[i]);
+            })(i, files[i]);
         }
     };
     exports.ourtest.require = require;
@@ -119,16 +123,23 @@
         'core/view.js',
         'core/util.js',
         'core/model.js',
-        'core/loader.js',
-        'adapter/normal.js'
+        'core/loader.js'
     ], function(){
-        // load case file interact
-        exports.ourtest.view.addListener('load', function(caseFile, chanel){
-            exports.ourtest.loader.loadFile(caseFile, function(file){
-                exports.ourtest.view.renderFile(file);
-                typeof chanel == 'object'
-                    && typeof chanel.finish == 'function'
-                    && chanel.finish();
+        require({
+            runtime : 'config/runtime.js',
+            cases : 'config/cases.js'
+        }, function(ns){
+            require([
+                ns.runtime.adapter
+            ], function(){
+                for (var i in ns.cases) {
+                    exports.ourtest.loader.loadFile(ns.cases[i], function(file){
+                        exports.ourtest.view.renderFile(file);
+                        typeof chanel == 'object'
+                            && typeof chanel.finish == 'function'
+                            && chanel.finish();
+                    });
+                }
             });
         });
 
@@ -136,6 +147,5 @@
         exports.ourtest.view.addListener('run', function(file, chanel){
             file.run(chanel);
         });
-        exports.ourtest.view.initPage();
     });
  })(typeof window != 'undefined' ? window : exports);

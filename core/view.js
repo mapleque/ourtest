@@ -22,56 +22,40 @@
         "<span class='passed-progress'></span>" +
         "<span class='faild-progress'></span>" +
         "</div>" +
+        "<div class='running'></div>" +
         "<div class='report'></div>" +
-        "</div>"
-        exports.document.getElementById('tree').innerHTML = html;
+        "</div>";
+        $('#tree').append(html);
         // run file
-        exports.document.getElementsByClassName('case')[0].onclick = function(){
-            start();
-            var fileName = exports.document.getElementsByClassName('case')[0].value;
+        $('.case').click(function(self){
+            var dom = self.parent();
+            start(dom);
+            var fileName = self.val();
             typeof eventMap['run'] == 'function'
                 && eventMap['run'](fileMap[fileName], {
                     addListenr:addListener,
                     report: function(type, op, msg){
                         switch (type) {
                             case 'progress':
-                                progress(op, msg);
+                                progress(dom, op, msg);
                                 break;
                             case 'error':
-                                error(op, msg);
+                                error(dom, op, msg);
                                 break;
                             case 'debug':
-                                //debug(op, msg);
+                                debug(dom, op, msg);
                                 break;
                             default:
-                                error(op, msg);
+                                error(dom, op, msg);
                         }
                     },
                     finish: function(){
-                        finish();
+                        finish(dom);
                     }
                 });
-        };
+        });
     };
     exports.ourtest.view.renderFile = renderFile;
-
-    var initPage = function(){
-        // init page view
-        var html = "" +
-            "<div>" +
-            "config your case file or path here " +
-            "<input type='text' id='file' value='cases/basic.js'>" +
-            "<input type='submit' value='load' id='load'>" +
-            "</div>" +
-            "<div id='tree'></div>";
-        exports.document.getElementById('content').innerHTML = html;
-        // load event
-        exports.document.getElementById('load').onclick = function(){
-            var file = exports.document.getElementById('file').value;
-            typeof eventMap['load'] == 'function' && eventMap['load'](file)
-        };
-    };
-    exports.ourtest.view.initPage = initPage;
 
     var renderCompare = function(tree, prefix){
         if (typeof prefix == 'undefined') {
@@ -90,41 +74,146 @@
         return table.join('\n');
     };
 
-    var start = function(){
-        exports.document.getElementsByClassName('report')[0].innerHTML = '';
+    var start = function(dom){
+        dom.find('.report').html('');
+        dom.find('.total').html('Total:0');
+        dom.find('.passed').html('Passed:0');
+        dom.find('.faild').html('Faild:0');
     };
 
-    var progress = function(op, msg){
+    var progress = function(dom, op, msg){
         var passedWidth = msg.passed / msg.total * 100 + '%';
         var faildWidth = msg.faild / msg.total * 100 + '%';
-        exports.document.getElementsByClassName('passed-progress')[0].style = 'width:' + passedWidth;
-        exports.document.getElementsByClassName('faild-progress')[0].style = 'width:' + faildWidth;
-        exports.document.getElementsByClassName('total')[0].innerHTML = 'Total:' + msg.total;
-        exports.document.getElementsByClassName('passed')[0].innerHTML = 'Passed:' + msg.passed;
-        exports.document.getElementsByClassName('faild')[0].innerHTML = 'Faild:' + msg.faild;
+        dom.find('.passed-progress').style('width', passedWidth);
+        dom.find('.faild-progress').style('width', faildWidth);
+        dom.find('.running').html(op.toString());
+        dom.find('.total').html('Total:' + msg.total);
+        dom.find('.passed').html('Passed:' + msg.passed);
+        dom.find('.faild').html('Faild:' + msg.faild);
     };
-    var debug = function(op, resp){
-        exports.document.getElementsByClassName('report')[0].innerHTML +=
+    var debug = function(dom, op, msg){
+        dom.find('.report').append(
             '<pre class="debug">' +
-            '[debug]' + op.url + ':' + resp + '\n' +
+            '[debug]' + msg + '\n' +
+            'op:' + op.toString() + '\n' +
             'lineNumber:' + op.lineNumber + '\n' +
             'callStack:' + '\n' +
             op.callStack.join('\n') + '\n' +
             'compareTree:' + '\n' +
             renderCompare(op.compareTree) + '\n' +
-            '</pre>';
+            '</pre>');
     };
-    var error = function(op, msg){
-        exports.document.getElementsByClassName('report')[0].innerHTML +=
+    var error = function(dom, op, msg){
+        dom.find('.report').append(
             '<pre class="error">' +
-            '[error]' + op.url + ':' + msg + '\n' +
+            '[error]' + msg + '\n' +
+            'op:' + op.toString() + '\n' +
             'lineNumber:' + op.lineNumber + '\n' +
             'callStack:' + '\n' +
             op.callStack.join('\n') + '\n' +
             'compareTree:' + '\n' +
             renderCompare(op.compareTree) + '\n' +
-            '</pre>';
+            '</pre>');
     };
-    var finish = function(){
+    var finish = function(dom){
+        dom.find('.running').html('');
+    };
+
+    // dom selector
+    var $ = function(selector, parents){
+        if (typeof parents == 'undefined') {
+            parents = [exports.document];
+        }
+        var tardom = [];
+        if (typeof selector == 'undeinfed') {
+            tardom = parents;
+        } else if (typeof selector != 'string') {
+            tardom = [];
+        } else {
+            for (var i = 0; i < parents.length; i++) {
+                var ele = parents[i];
+                var dom = [];
+                if (selector[0] == '#') {
+                    dom = [ele.getElementById(selector.substr(1))];
+                } else if (selector[0] == '.') {
+                    dom = ele.getElementsByClassName(selector.substr(1));
+                } else {
+                    dom = ele.getElementsByTagName(selector);
+                }
+                for (var j = 0; j < dom.length; j++ ) {
+                    tardom.push(dom[i]);
+                }
+            }
+        }
+        return new $$(tardom);
+    };
+    var $$ = function(dom){
+        var self = this;
+        self.dom = dom;
+        self.find = function(selector){
+            return $(selector, self.dom);
+        };
+        self.eq = function(index){
+            if (index >= self.dom.length) {
+                return new $$([]);
+            }
+            return new $$([self.dom[index]]);
+        };
+        self.parent = function(){
+            return new $$([self.dom[0].parentElement]);
+        };
+        self.html = function(html){
+            for (var i = 0; i < self.dom.length; i++) {
+                self.dom[i].innerHTML = html;
+            }
+            return self;
+        };
+        self.append = function(html){
+            for (var i = 0; i < self.dom.length; i++) {
+                self.dom[i].innerHTML += html;
+            }
+            return self;
+        };
+        self.prepend = function(html){
+            for (var i = 0; i < self.dom.length; i++) {
+                self.dom[i].innerHTML = html + self.dom[i].innerHTML;
+            }
+            return self;
+        };
+        self.style = function(key, value){
+            if (typeof key == 'object'){
+                var conf = key;
+                for (var key in conf) {
+                    var value = conf[key];
+                    self.style(key, value);
+                }
+            } else {
+                for (var i = 0; i < self.dom.length; i++) {
+                    if (self.dom[i].style.hasOwnProperty(key)) {
+                        self.dom[i].style[key] = value;
+                    }
+                }
+            }
+            return self;
+        };
+        self.val = function(value){
+            if (typeof value == 'undefined') {
+                return self.dom[0].value;
+            } else {
+                for (var i = 0; i < self.dom.length; i++) {
+                    self.dom[i].value = value;
+                }
+                return self;
+            }
+        };
+        self.click = function(callback){
+            for (var i = 0; i < self.dom.length; i++) {
+                self.dom[i].onclick = function(){
+                    callback(self);
+                };
+            }
+            return self;
+        };
+        return self;
     };
  })(typeof window != 'undefined' ? window : exports);

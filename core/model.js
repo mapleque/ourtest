@@ -65,6 +65,15 @@
                 self.type = 'unknown';
             }
         }
+        self.toString = function(){
+            return JSON.stringify({
+                type:self.type,
+                url:self.url,
+                method:self.method,
+                data:self.data,
+                assert:self.assert
+            });
+        };
 
         self.run = function(chanel, callback){
             switch (self.type) {
@@ -158,7 +167,7 @@
                     self.response = self.assertPredeal(resp);
                 }
                 var ret = assert();
-                chanel.report('debug', self, JSON.stringify(resp));
+                chanel.report('debug', self, 'send a request');
                 callback(self, ret);
             });
         };
