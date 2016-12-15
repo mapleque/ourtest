@@ -63,12 +63,12 @@
         }
         var table = [];
         if (tree.child) {
-            table.push('\t' + (tree.result? 'O': 'X') + prefix + '[' + key + ']:');
+            table.push(prefix + (tree.result? 'O': 'X') + '-|----[' + key + ']');
             for (var key in tree.child) {
-                table.push(renderCompare(key, tree.child[key], prefix + '\t'));
+                table.push(renderCompare(key, tree.child[key], prefix + '  |\t'));
             }
         } else if (typeof tree.result != 'undefined'){
-            table.push('\t' + prefix + (tree.result? 'O': 'X') + '\t[' + key + ']\t' +  tree.left + '\t' + tree.right);
+            table.push(prefix + (tree.result? 'O': 'X') + '-|----[' + key + ']\tr:' +  tree.left + '\te:' + tree.right);
         } else {
             return prefix + 'no compare property';
         }
