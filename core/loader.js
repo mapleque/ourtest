@@ -49,7 +49,7 @@
                     opt.method = 'POST';
                     return opt;
                 };
-                var ops = eval(code + '\n//# sourceURL=ourtest/cases.js');
+                var ops = eval(code + '\n//# sourceURL=' + fileUrl);
                 for (var i in ops) {
                     var op = new exports.ourtest.Op(ops[i]);
                     file.addOp(op);
