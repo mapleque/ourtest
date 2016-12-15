@@ -95,8 +95,17 @@
     var require = function(files, callback){
         var namespace = {};
         var total = 0;
-        for (var i in files) {
-            total++;
+        var fileObjs = {};
+        if (files instanceof Array) {
+            total = files.length;
+            for (var i = 0; i < total; i++) {
+                fileObjs[i] = files[i];
+            }
+        } else {
+            for (var i in files) {
+                total++;
+            }
+            fileObjs = files;
         }
         var finish = 0;
         var end = function(){
@@ -105,7 +114,7 @@
                 callback(namespace);
             }
         };
-        for (var i in files) {
+        for (var i in fileObjs) {
             (function(key, file){
                 request({
                     url: file,
@@ -115,7 +124,7 @@
                         end();
                     }
                 });
-            })(i, files[i]);
+            })(i, fileObjs[i]);
         }
     };
     exports.ourtest.require = require;
@@ -132,7 +141,7 @@
             require([
                 ns.runtime.adapter
             ], function(){
-                for (var i in ns.cases) {
+                for (var i = 0; i < ns.cases.length; i++) {
                     exports.ourtest.loader.loadFile(ns.cases[i], function(file){
                         exports.ourtest.view.renderFile(file);
                         typeof chanel == 'object'
