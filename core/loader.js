@@ -49,6 +49,9 @@
                     opt.method = 'POST';
                     return opt;
                 };
+                var ignore = function(){
+                    return true;
+                };
                 var ops = eval(code + '\n//# sourceURL=' + fileUrl);
                 for (var i in ops) {
                     var op = new exports.ourtest.Op(ops[i]);
