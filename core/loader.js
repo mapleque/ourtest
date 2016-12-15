@@ -36,7 +36,7 @@
                     var opt = {};
                     opt.lineNumber = l.lineNumber;
                     opt.callStack = l.callStack;
-                    opt.url = path + '/' + api;
+                    opt.url = '/' +  path + '/' + api;
                     opt.method = 'GET';
                     return opt;
                 };
