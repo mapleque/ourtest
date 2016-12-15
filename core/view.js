@@ -27,7 +27,7 @@
         "</div>";
         $('#tree').append(html);
         // run file
-        $('.case').click(function(self){
+        $('#tree').find('.case').click(function(self){
             var dom = self.parent();
             start(dom);
             var fileName = self.val();
@@ -142,7 +142,7 @@
                     dom = ele.getElementsByTagName(selector);
                 }
                 for (var j = 0; j < dom.length; j++ ) {
-                    tardom.push(dom[i]);
+                    tardom.push(dom[j]);
                 }
             }
         }
@@ -209,8 +209,8 @@
         };
         self.click = function(callback){
             for (var i = 0; i < self.dom.length; i++) {
-                self.dom[i].onclick = function(){
-                    callback(self);
+                self.dom[i].onclick = function(ele){
+                    callback(new $$([ele.target]));
                 };
             }
             return self;
