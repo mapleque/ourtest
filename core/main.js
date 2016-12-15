@@ -40,7 +40,7 @@
         if (typeof opt.data == 'object') {
             var data = [];
             for (var key in opt.data) {
-                data.push(key + '=' + opt.data[key]);
+                data.push(key + '=' + JSON.stringify(opt.data[key]));
             }
             requestData = data.join('&');
         }
