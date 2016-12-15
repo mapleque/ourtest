@@ -1,9 +1,0 @@
-[
-    'cases/basic.js',
-    'cases/basic.js',
-    'cases/basic.js',
-    'cases/basic.js',
-    'cases/basic.js',
-    'cases/basic.js',
-    'cases/basic.js',
-]
