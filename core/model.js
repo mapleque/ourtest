@@ -92,9 +92,21 @@
             var tree = {};
             if (typeof a == 'function') {
                 a = a(b);
+                if (typeof a == 'boolean') {
+                    tree.left = 'func';
+                    tree.right = b;
+                    tree.result = a;
+                    return tree;
+                }
             }
             if (typeof b == 'function') {
                 b = b(a);
+                if (typeof b == 'boolean') {
+                    tree.left = a;
+                    tree.right = 'func';
+                    tree.result = b;
+                    return tree;
+                }
             }
             if (typeof a == 'string' && typeof b == 'string') {
                 tree.left = a;
