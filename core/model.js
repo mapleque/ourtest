@@ -114,11 +114,7 @@
                     if (!ret.result) {
                         result = false;
                     }
-                    child[i] = {
-                        left : a[i],
-                        right : b[i],
-                        result : ret.result
-                    };
+                    child[i] = ret;
                 }
                 for (var i in b) {
                     if (!child.hasOwnProperty(i)) {
@@ -126,11 +122,7 @@
                         if (!ret.result) {
                             result = false;
                         }
-                        child[i] = {
-                            left : a[i],
-                            right : b[i],
-                            result : ret.result
-                        };
+                        child[i] = ret;
                     }
                 }
                 tree.child = child;
