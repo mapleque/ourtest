@@ -57,17 +57,18 @@
     };
     exports.ourtest.view.renderFile = renderFile;
 
-    var renderCompare = function(tree, prefix){
+    var renderCompare = function(key, tree, prefix){
         if (typeof prefix == 'undefined') {
             prefix = '    ';
         }
         var table = [];
         if (tree.child) {
+            table.push('\t' + (tree.result? 'O': 'X') + prefix + '[' + key + ']:');
             for (var key in tree.child) {
-                table.push(renderCompare(tree.child[key], prefix + '    '));
+                table.push(renderCompare(key, tree.child[key], prefix + '\t'));
             }
         } else if (typeof tree.result != 'undefined'){
-            table.push('    ' + (tree.result? 'O': 'X') + prefix + tree.left + '    ' + tree.right);
+            table.push('\t' + prefix + (tree.result? 'O': 'X') + '\t[' + key + ']\t' +  tree.left + '\t' + tree.right);
         } else {
             return prefix + 'no compare property';
         }
@@ -100,7 +101,7 @@
             'callStack:' + '\n' +
             op.callStack.join('\n') + '\n' +
             'compareTree:' + '\n' +
-            renderCompare(op.compareTree) + '\n' +
+            renderCompare('assert', op.compareTree) + '\n' +
             '</pre>');
     };
     var error = function(dom, op, msg){
@@ -112,7 +113,7 @@
             'callStack:' + '\n' +
             op.callStack.join('\n') + '\n' +
             'compareTree:' + '\n' +
-            renderCompare(op.compareTree) + '\n' +
+            renderCompare('assert', op.compareTree) + '\n' +
             'error:' + op.error + '\n' +
             '</pre>');
     };
