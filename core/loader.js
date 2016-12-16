@@ -52,6 +52,18 @@
                 var ignore = function(){
                     return true;
                 };
+                var savePool = {};
+                var save = function(key){
+                    return function(resp){
+                        savePool[key] = resp;
+                        return true;
+                    };
+                };
+                var use = function(key){
+                    return function(){
+                        return savePool[key];
+                    };
+                };
                 var ops = eval(code + '\n//# sourceURL=' + fileUrl);
                 for (var i in ops) {
                     var op = new exports.ourtest.Op(ops[i]);

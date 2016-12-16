@@ -166,6 +166,26 @@
                 callback(self, false);
                 return;
             }
+            var processData = function(data){
+                if (typeof data == 'object') {
+                    if (data instanceof Array) {
+                        for (var i = 0; i < data.length; i++) {
+                            data[i] = processData(data[i]);
+                        }
+                    } else {
+                        for (var i in data) {
+                            data[i] = processData(data[i]);
+                        }
+                    }
+                    return data;
+                } else if (typeof data == 'function'){
+                    data = data();
+                    return processData(data);
+                } else {
+                    return data;
+                }
+            };
+            self.data = processData(self.data);
 
             exports.ourtest.adapter.request(self, function(resp, success){
                 self.response = resp;
