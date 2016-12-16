@@ -25,6 +25,7 @@
             callStack : stack
         };
     };
+    var savePool = exports.ourtest.savePool = {};
 
     var loadFile = function(fileUrl, callback){
         exports.ourtest.request({
@@ -52,7 +53,6 @@
                 var ignore = function(){
                     return true;
                 };
-                var savePool = {};
                 var save = function(key){
                     return function(resp){
                         savePool[key] = resp;

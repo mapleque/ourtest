@@ -68,22 +68,26 @@
             }
         }
         self.processData = function(data){
+            var cloneData;
             if (typeof data == 'object') {
                 if (data instanceof Array) {
+                    cloneData = [];
                     for (var i = 0; i < data.length; i++) {
-                        data[i] = self.processData(data[i]);
+                        cloneData[i] = self.processData(data[i]);
                     }
                 } else {
+                    cloneData = {};
                     for (var i in data) {
-                        data[i] = self.processData(data[i]);
+                        cloneData[i] = self.processData(data[i]);
                     }
                 }
-                return data;
+                return cloneData;
             } else if (typeof data == 'function'){
-                data = data();
-                return self.processData(data);
+                cloneData = data();
+                return self.processData(cloneData);
             } else {
-                return data;
+                cloneData = data;
+                return cloneData;
             }
         };
 
