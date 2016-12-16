@@ -71,11 +71,11 @@
             if (typeof data == 'object') {
                 if (data instanceof Array) {
                     for (var i = 0; i < data.length; i++) {
-                        data[i] = processData(data[i]);
+                        data[i] = self.processData(data[i]);
                     }
                 } else {
                     for (var i in data) {
-                        data[i] = processData(data[i]);
+                        data[i] = self.processData(data[i]);
                     }
                 }
                 return data;
