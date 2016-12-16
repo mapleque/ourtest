@@ -81,7 +81,7 @@
                 return data;
             } else if (typeof data == 'function'){
                 data = data();
-                return processData(data);
+                return self.processData(data);
             } else {
                 return data;
             }
