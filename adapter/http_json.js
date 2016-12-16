@@ -1,15 +1,23 @@
 (function(exports){
     exports.ourtest.adapter = {};
     exports.ourtest.adapter.request = function(op, callback){
+        var data = op.processData(op.data);
+        if (typeof op.dataPredeal == 'function'){
+            op.dataPredeal(data);
+        }
         request({
             url:op.url,
             method:op.method,
-            data:op.data,
+            data:data,
             success:function(resp){
                 try {
-                    callback(JSON.parse(resp), true);
+                    resp = JSON.parse(resp);
+                    if (typeof op.assertPredeal == 'function') {
+                        resp= op.assertPredeal(resp);
+                    }
+                    callback(resp, true);
                 } catch(e){
-                    callback(e, false)
+                    callback(e, false, resp)
                 }
             },
             error: function(msg){
